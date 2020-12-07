@@ -9,7 +9,7 @@ class ExchangeType(object):
             return _make_cpp_exchangetype(*args, **kwargs)
         return super(ExchangeType, cls).__new__(cls)
 
-    def __init__(self, name):
+    def __init__(self, name: str) -> None:
         assert isinstance(name, str)
         self.__name = name
 
@@ -20,7 +20,7 @@ class ExchangeType(object):
     def name(self) -> str:
         return self.__name
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: ExchangeType) -> bool:
         return self.name == other.name
 
     def __bool__(self) -> bool:
@@ -33,7 +33,7 @@ class ExchangeType(object):
         return {"name": self.name}
 
     @staticmethod
-    def fromJson(jsn):
+    def fromJson(jsn: dict):
         return ExchangeType(name=jsn["name"])
 
     def __repr__(self) -> str:

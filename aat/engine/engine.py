@@ -81,7 +81,7 @@ class TradingEngine(Application):
     aliases = {"port": "AAT.port", "trading_type": "AAT.trading_type"}
 
     @validate("trading_type")
-    def _validate_trading_type(self, proposal):
+    def _validate_trading_type(self, proposal) -> TradingType:
         if proposal["value"] not in (
             TradingType.LIVE,
             TradingType.SIMULATION,
@@ -98,7 +98,7 @@ class TradingEngine(Application):
                 raise TraitError(f"Invalid exchange type: {exch}")
         return proposal["value"]
 
-    def __init__(self, **config):
+    def __init__(self, **config) -> None:
         # get port for API access
         self.port = config.get("general", {}).get("port", self.port)
 
@@ -423,7 +423,7 @@ class TradingEngine(Application):
         # Before engine shutdown, send an exit event
         await self.processEvent(Event(type=EventType.EXIT, target=None))
 
-    async def processEvent(self, event, strategy=None):
+    async def processEvent(self, event: Event, strategy=None):
         """send an event to all registered event handlers
 
         Arguments:

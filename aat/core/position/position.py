@@ -35,7 +35,7 @@ class Position(object):
             return _make_cpp_position(*args, **kwargs)
         return super(Position, cls).__new__(cls)
 
-    def __init__(self, size, price, timestamp, instrument, exchange, trades):
+    def __init__(self, size: float, price:float, timestamp: datetime, instrument: Instrument, exchange: ExchangeType, trades) -> None:
         assert instrument is None or isinstance(instrument, Instrument)
         assert isinstance(exchange, ExchangeType)
 

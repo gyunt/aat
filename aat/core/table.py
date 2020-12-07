@@ -38,20 +38,25 @@ class TableHandler(EventHandler):
 
     def onTrade(self, event: Event):
         """onTrade"""
-        self._trades.update([event.target.json()])
+        trade: Trade = event.target  # type: ignore
+        self._trades.update([trade.json()])
 
     def onOpen(self, event: Event):
         """onOpen"""
-        self._orders.update([event.target.json()])
+        order: Order = event.target  # type: ignore
+        self._orders.update([order.json()])
 
     def onCancel(self, event: Event):
         """onCancel"""
-        self._orders.remove([event.target.id])
+        order: Order = event.target  # type: ignore
+        self._orders.remove([order.id])
 
     def onChange(self, event: Event):
         """onChange"""
-        self._orders.update([event.target.json()])
+        order: Order = event.target  # type: ignore
+        self._orders.update([order.json()])
 
     def onFill(self, event: Event):
         """onFill"""
-        self._orders.remove([event.target.id])
+        order: Order = event.target  # type: ignore
+        self._orders.remove([order.id])

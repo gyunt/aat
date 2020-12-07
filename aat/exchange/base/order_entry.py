@@ -17,7 +17,7 @@ class _OrderEntry(metaclass=ABCMeta):
         """get cash balance"""
         return []
 
-    async def newOrder(self, order: Order):
+    async def newOrder(self, order: Order) -> bool:
         """submit a new order to the exchange. should set the given order's `id` field to exchange-assigned id
 
         Returns:
@@ -28,7 +28,7 @@ class _OrderEntry(metaclass=ABCMeta):
         """
         raise NotImplementedError()
 
-    async def cancelOrder(self, order: Order):
+    async def cancelOrder(self, order: Order) -> bool:
         """cancel a previously submitted order to the exchange.
 
         Returns:

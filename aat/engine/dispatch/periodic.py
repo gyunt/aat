@@ -1,9 +1,10 @@
+from datetime import datetime
 from typing import Callable, Awaitable, List
 from temporalcache.utils import should_expire  # type: ignore
 
 
 class Periodic(object):
-    def __init__(self, loop, last_ts, function, second, minute, hour):
+    def __init__(self, loop: str, last_ts: datetime, function: Callable[Awaitable[None]], second: int, minute: int, hour: int) -> None:
         self._loop = loop
         self._function: Callable[Awaitable[None]] = function
         self._second = second
@@ -16,12 +17,12 @@ class Periodic(object):
     def stop(self) -> None:
         self._continue = False
 
-    def expires(self, timestamp):
+    def expires(self, timestamp: datetime) -> bool:
         return should_expire(
             self._last, timestamp, self._second, self._minute, self._hour
         )
 
-    async def execute(self, timestamp):
+    async def execute(self, timestamp: datetime) -> None:
         if self.expires(timestamp):
             await self._function()
             self._last = timestamp
@@ -30,7 +31,7 @@ class Periodic(object):
 class PeriodicManagerMixin(object):
     _periodics: List[Periodic] = []
 
-    def periodics(self):
+    def periodics(self) -> List[Periodic]:
         return self._periodics
 
     def periodicIntervals(self) -> int:

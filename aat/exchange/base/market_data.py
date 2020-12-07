@@ -1,16 +1,19 @@
 from abc import ABCMeta
+from typing import List
+
+from aat import Instrument, Event
 
 
 class _MarketData(metaclass=ABCMeta):
     """internal only class to represent the streaming-source
     side of a data source"""
 
-    async def instruments(self):
+    async def instruments(self) -> List[Instrument]:
         """get list of available instruments"""
         return []
 
-    async def subscribe(self, instrument):
+    async def subscribe(self, instrument) -> None:
         """subscribe to market data for a given instrument"""
 
-    async def tick(self):
+    async def tick(self) -> Event:
         """return data from exchange"""

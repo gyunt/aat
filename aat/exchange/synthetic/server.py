@@ -35,7 +35,7 @@ def _main(port=5000):
     return start_server
 
 
-def main():
+def main() -> None:
     try:
         asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
         asyncio.get_event_loop().run_until_complete(

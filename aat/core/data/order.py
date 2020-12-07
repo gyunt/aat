@@ -37,17 +37,17 @@ class Order(object):
 
     def __init__(
         self,
-        volume,
-        price,
-        side,
-        instrument,
+        volume: float,
+        price: float,
+        side: Side,
+        instrument: Instrument,
         exchange=ExchangeType(""),
         notional=0.0,
         order_type=OrderType.MARKET,
         flag=OrderFlag.NONE,
         stop_target=None,
         **kwargs,
-    ):
+    ) -> None:
         self.__id = kwargs.get(
             "id", 0
         )  # on construction, provide no ID until exchange assigns one
@@ -198,7 +198,7 @@ class Order(object):
     def __repr__(self) -> str:
         return f"Order( instrument={self.instrument}, timestamp={self.timestamp}, {self.volume}@{self.price}, side={self.side}, exchange={self.exchange})"
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Order) -> bool:
         assert isinstance(other, Order)
         return (
             self.id == other.id
@@ -229,7 +229,7 @@ class Order(object):
         }
 
     @staticmethod
-    def fromJson(jsn):
+    def fromJson(jsn:dict) -> Order:
         kwargs = {}
         kwargs["volume"] = jsn["volume"]
         kwargs["price"] = jsn["price"]

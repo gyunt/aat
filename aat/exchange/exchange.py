@@ -1,4 +1,7 @@
 from abc import abstractmethod
+
+from aat.core import ExchangeType
+
 from .base.market_data import _MarketData
 from .base.order_entry import _OrderEntry
 
@@ -16,10 +19,10 @@ class Exchange(_MarketData, _OrderEntry):
         exchanges can be queried for data, or send data
     """
 
-    def __init__(self, exchange):
-        self._exchange = exchange
+    def __init__(self, exchange) -> None:
+        self._exchange: ExchangeType = exchange
 
-    def exchange(self):
+    def exchange(self) -> ExchangeType:
         return self._exchange
 
     @staticmethod

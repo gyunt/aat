@@ -1,6 +1,7 @@
 from collections import deque
+from typing import Deque
 
-from aat.core.data import Event, Trade
+from aat.core.data import Event, Trade, Order
 from aat.config import EventType
 
 from ..cpp import _CPP, _make_cpp_collector
@@ -27,13 +28,13 @@ class _Collector(object):
         self._callback = callback
 
         # queue of events to trigger
-        self._event_queue = deque()
+        self._event_queue: Deque[Event] = deque()
 
         # queue of orders that are included in the trade
-        self._orders = deque()
+        self._orders: Deque[Order] = deque()
 
         # the taker order
-        self._taker_order = None
+        self._taker_order: Order = None
 
         # price levels to clear, if we commit
         self._price_levels = deque()
@@ -55,33 +56,33 @@ class _Collector(object):
     def setCallback(self, callback):
         self._callback = callback
 
-    def push(self, event):
+    def push(self, event: Event):
         """push event to queue"""
         self._event_queue.append(event)
 
-    def pushOpen(self, order):
+    def pushOpen(self, order: Order):
         """push order open"""
         self.push(Event(type=EventType.OPEN, target=order))
 
-    def pushFill(self, order, accumulate=False, filled_in_txn=0.0):
+    def pushFill(self, order: Order, accumulate=False, filled_in_txn=0.0):
         """push order fill"""
         if accumulate:
             self.accumulate(order, filled_in_txn)
         self.push(Event(type=EventType.FILL, target=order))
 
-    def pushChange(self, order, accumulate=False, filled_in_txn=0.0):
+    def pushChange(self, order: Order, accumulate=False, filled_in_txn=0.0):
         """push order change"""
         if accumulate:
             self.accumulate(order, filled_in_txn)
         self.push(Event(type=EventType.CHANGE, target=order))
 
-    def pushCancel(self, order, accumulate=False, filled_in_txn=0.0):
+    def pushCancel(self, order: Order, accumulate=False, filled_in_txn=0.0):
         """push order cancellation"""
         if accumulate:
             self.accumulate(order, filled_in_txn)
         self.push(Event(type=EventType.CANCEL, target=order))
 
-    def pushTrade(self, taker_order, filled_in_txn):
+    def pushTrade(self, taker_order: Order, filled_in_txn):
         """push taker order trade"""
         if not self.orders:
             raise Exception("No maker orders provided")
@@ -106,7 +107,7 @@ class _Collector(object):
 
         self._taker_order = taker_order
 
-    def accumulate(self, order, filled_in_txn):
+    def accumulate(self, order: Order, filled_in_txn):
         assert filled_in_txn > 0
 
         # FIXME price change/volume down?
@@ -153,25 +154,25 @@ class _Collector(object):
     # Order Stats #
     ###############
     @property
-    def price(self):
+    def price(self) -> float:
         """VWAP"""
         return self._price
 
     @property
-    def volume(self):
+    def volume(self) -> float:
         """volume"""
         return self._volume
 
     @property
-    def orders(self):
+    def orders(self) -> Deque[Order]:
         return self._orders
 
     @property
-    def taker_order(self):
+    def taker_order(self) -> Order:
         return self._taker_order
 
     @property
-    def events(self):
+    def events(self) -> Deque[Event]:
         return self._event_queue
 
     @property

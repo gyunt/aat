@@ -102,10 +102,7 @@ fixjs:  ## run clang-format
 	cd js; yarn fix
 
 annotate: ## MyPy type annotation check
-	$(PYTHON) -m mypy aat
-
-annotate_l: ## MyPy type annotation check - count only
-	$(PYTHON) -m mypy -s aat | wc -l 
+	$(PYTHON) -m mypy --disallow-untyped-calls --disallow-untyped-defs aat
 
 docs:  ## Build the sphinx docs
 	make -C docs html

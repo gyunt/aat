@@ -1,11 +1,13 @@
+from typing import Tuple
+
 from ibapi.contract import Contract, ComboLeg  # type: ignore
 from ibapi.order import Order  # type: ignore
 
 from aat.config import InstrumentType, OrderType
-from aat.core import Instrument
+from aat.core import Instrument, Order as AATOrder
 
 
-def _constructContract(instrument):
+def _constructContract(instrument: Instrument) -> Contract:
     """Construct an IB contract and order from an Order object"""
     contract = Contract()
 
@@ -159,7 +161,7 @@ def _constructContract(instrument):
     return contract
 
 
-def _constructContractAndOrder(aat_order):
+def _constructContractAndOrder(aat_order: AATOrder) -> Tuple[Contract, Order]:
     contract = _constructContract(aat_order.instrument)
     order = Order()
     order.action = aat_order.side.value
@@ -194,7 +196,7 @@ def _constructContractAndOrder(aat_order):
     return contract, order
 
 
-def _constructInstrument(contract):
+def _constructInstrument(contract: Contract) -> Instrument:
     name = contract.localSymbol if contract.localSymbol else contract.symbol
     brokerId = str(contract.conId)
     brokerExchange = contract.exchange
