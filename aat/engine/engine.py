@@ -290,7 +290,9 @@ class TradingEngine(Application):
 
         return _wrapper
 
-    def registerCallback(self, event_type: EventType, callback: Callable, handler=None) -> None:
+    def registerCallback(
+        self, event_type: EventType, callback: Callable, handler=None
+    ) -> None:
         """register a callback for a given event type
 
         Args:

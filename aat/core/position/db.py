@@ -22,7 +22,7 @@ class PositionDB(object):
 
     def positions(
         self,
-        name:str="",
+        name: str = "",
         type: InstrumentType = InstrumentType.CURRENCY,
         exchange: ExchangeType = ExchangeType(""),
     ) -> None:
@@ -30,7 +30,7 @@ class PositionDB(object):
 
     def get(
         self,
-        name:str="",
+        name: str = "",
         type: InstrumentType = InstrumentType.CURRENCY,
         exchange: ExchangeType = ExchangeType(""),
     ) -> None:

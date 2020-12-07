@@ -18,7 +18,9 @@ class Event(object):
             return _make_cpp_event(*args, **kwargs)
         return super(Event, cls).__new__(cls)
 
-    def __init__(self, type: EventType, target: Union[Data, Order, Trade, Error, None]) -> None:
+    def __init__(
+        self, type: EventType, target: Union[Data, Order, Trade, Error, None]
+    ) -> None:
         self.__type = type
         self.__target = target
 
@@ -39,7 +41,12 @@ class Event(object):
 
     def json(self) -> Mapping[str, Union[str, int, float]]:
         target = (
-            {"target." + k: v for k, v in (self.target.json() if hasattr(self.target, 'json') else {}).items()}
+            {
+                "target." + k: v
+                for k, v in (
+                    self.target.json() if hasattr(self.target, "json") else {}
+                ).items()
+            }
             if self.target
             else {"target": ""}
         )

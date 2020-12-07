@@ -44,7 +44,7 @@ def id_generator() -> Callable[[], int]:
     return _gen_id
 
 
-def _merge(lst1: List, lst2: List, sum: bool=True) -> List:
+def _merge(lst1: List, lst2: List, sum: bool = True) -> List:
     """merge two lists of (val, datetime) and accumulate"""
     df1 = pd.DataFrame(lst1, columns=("val1", "date1"))
     df1.set_index("date1", inplace=True)

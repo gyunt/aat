@@ -42,7 +42,7 @@ class RiskManager(ManagerBase):
     # *********************
     # Risk Methods        *
     # *********************
-    def risk(self, position:Position = None) -> None:
+    def risk(self, position: Position = None) -> None:
         # TODO
         return "risk"
 

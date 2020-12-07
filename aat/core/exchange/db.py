@@ -21,13 +21,13 @@ class ExchangeDB(object):
 
     def instruments(
         self,
-        name:str="",
+        name: str = "",
         type: InstrumentType = InstrumentType.EQUITY,
         exchange: ExchangeType = ExchangeType(""),
     ) -> None:
         raise NotImplementedError()
 
-    def get(self, name:str="", instrument: "Instrument" = None) -> "ExchangeType":
+    def get(self, name: str = "", instrument: "Instrument" = None) -> "ExchangeType":
         if name:
             return self._name_map[name]
         raise NotImplementedError()

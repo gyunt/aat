@@ -15,9 +15,9 @@ class CoinbaseProExchange(Exchange):
         self,
         trading_type: TradingType,
         verbose: bool,
-        api_key:str = "",
-        api_secret:str = "",
-        api_passphrase:str = "",
+        api_key: str = "",
+        api_secret: str = "",
+        api_passphrase: str = "",
         **kwargs: dict
     ) -> None:
         self._trading_type = trading_type

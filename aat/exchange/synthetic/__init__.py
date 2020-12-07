@@ -25,11 +25,11 @@ class SyntheticExchange(Exchange):
 
     def __init__(
         self,
-        trading_type: TradingType =None,
-        verbose:bool=False,
-        inst_count:int=3,
-        cycles:int=10000,
-        positions:bool=False
+        trading_type: TradingType = None,
+        verbose: bool = False,
+        inst_count: int = 3,
+        cycles: int = 10000,
+        positions: bool = False,
     ) -> None:
         """A synthetic exchange. Runs a limit order book for a number of randomly generated assets,
         takes random walks.

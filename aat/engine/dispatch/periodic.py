@@ -4,7 +4,15 @@ from temporalcache.utils import should_expire  # type: ignore
 
 
 class Periodic(object):
-    def __init__(self, loop: str, last_ts: datetime, function: Callable[Awaitable[None]], second: int, minute: int, hour: int) -> None:
+    def __init__(
+        self,
+        loop: str,
+        last_ts: datetime,
+        function: Callable[Awaitable[None]],
+        second: int,
+        minute: int,
+        hour: int,
+    ) -> None:
         self._loop = loop
         self._function: Callable[Awaitable[None]] = function
         self._second = second

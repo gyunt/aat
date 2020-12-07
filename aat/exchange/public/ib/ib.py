@@ -14,7 +14,15 @@ from ibapi.wrapper import EWrapper  # type: ignore
 
 from aat.exchange import Exchange
 from aat.config import EventType, TradingType, Side
-from aat.core import ExchangeType, Event, Trade, Order as AATOrder, Position, Account, Instrument
+from aat.core import (
+    ExchangeType,
+    Event,
+    Trade,
+    Order as AATOrder,
+    Position,
+    Account,
+    Instrument,
+)
 
 from .utils import _constructContract, _constructContractAndOrder, _constructInstrument
 
@@ -73,7 +81,7 @@ class _API(EWrapper, EClient):
     def cancelOrder(self, order: AATOrder) -> None:
         super().cancelOrder(order.id)
 
-    def contractDetails(self, reqId:int, contractDetails: dict) -> None:
+    def contractDetails(self, reqId: int, contractDetails: dict) -> None:
         self._contract_info_queue.put(contractDetails)
 
     def orderStatus(
@@ -193,7 +201,14 @@ class _API(EWrapper, EClient):
 class InteractiveBrokersExchange(Exchange):
     """Interactive Brokers Exchange"""
 
-    def __init__(self, trading_type: TradingType, verbose: bool, account:str="", delayed:bool=True, **kwargs: dict) -> None:
+    def __init__(
+        self,
+        trading_type: TradingType,
+        verbose: bool,
+        account: str = "",
+        delayed: bool = True,
+        **kwargs: dict
+    ) -> None:
         self._trading_type = trading_type
         self._verbose = verbose
 

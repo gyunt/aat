@@ -28,7 +28,14 @@ class Trade(object):
             return _make_cpp_trade(*args, **kwargs)
         return super(Trade, cls).__new__(cls)
 
-    def __init__(self, volume:float, price:float, taker_order:Order, maker_orders: Optional[List[Order]]=None, **kwargs) -> None:
+    def __init__(
+        self,
+        volume: float,
+        price: float,
+        taker_order: Order,
+        maker_orders: Optional[List[Order]] = None,
+        **kwargs,
+    ) -> None:
         self.__id = kwargs.get(
             "id", "0"
         )  # on construction, provide no ID until exchange assigns one

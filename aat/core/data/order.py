@@ -41,11 +41,11 @@ class Order(object):
         price: float,
         side: Side,
         instrument: Instrument,
-        exchange:ExchangeType=ExchangeType(""),
-        notional:float=0.0,
-        order_type:OrderType=OrderType.MARKET,
-        flag:OrderFlag=OrderFlag.NONE,
-        stop_target:Optional[Order]=None,
+        exchange: ExchangeType = ExchangeType(""),
+        notional: float = 0.0,
+        order_type: OrderType = OrderType.MARKET,
+        flag: OrderFlag = OrderFlag.NONE,
+        stop_target: Optional[Order] = None,
         **kwargs,
     ) -> None:
         self.__id = kwargs.get(
@@ -229,7 +229,7 @@ class Order(object):
         }
 
     @staticmethod
-    def fromJson(jsn:dict) -> Order:
+    def fromJson(jsn: dict) -> Order:
         kwargs = {}
         kwargs["volume"] = jsn["volume"]
         kwargs["price"] = jsn["price"]
