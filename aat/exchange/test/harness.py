@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import List
 from aat import Strategy
-from aat.config import EventType, InstrumentType, Side
+from aat.config import EventType, InstrumentType, Side, TradingType
 from aat.core import ExchangeType, Event, Instrument, Trade, Order
 from aat.exchange import Exchange
 
@@ -12,7 +12,7 @@ class Harness(Exchange):
     This is a synthetic exchange that runs through a sequence of data objects and
     asserts some specific behavior in the strategies under test"""
 
-    def __init__(self, trading_type, verbose):
+    def __init__(self, trading_type: TradingType, verbose: bool) -> None:
         super().__init__(ExchangeType("testharness"))
         self._trading_type = trading_type
         self._verbose = verbose

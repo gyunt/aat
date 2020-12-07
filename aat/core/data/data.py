@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Mapping, Union, Type
+from typing import Mapping, Union, Type, Optional
 
 from .cpp import _CPP, _make_cpp_data
 from ..exchange import ExchangeType
@@ -20,12 +20,12 @@ class Data(object):
         "__data",
     ]
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args, **kwargs):  # type: ignore
         if _CPP:
             return _make_cpp_data(*args, **kwargs)
         return super(Data, cls).__new__(cls)
 
-    def __init__(self, instrument=None, exchange=ExchangeType(""), data={}, **kwargs) -> None:
+    def __init__(self, instrument: Optional[Instrument]=None, exchange=ExchangeType(""), data={}, **kwargs:dict) -> None:
         self.__id = kwargs.get("id", _ID_GENERATOR())
         self.__timestamp = kwargs.get("timestamp", datetime.now())
 

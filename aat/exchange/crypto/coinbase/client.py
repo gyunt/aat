@@ -16,6 +16,7 @@ from aat import (
     ExchangeType,
     Instrument,
     InstrumentType,
+    Account,
     Position,
     Order,
     Trade,
@@ -47,7 +48,7 @@ class CoinbaseExchangeClient(AuthBase):
         api_key: str,
         secret_key: str,
         passphrase: str,
-    ):
+    ) -> None:
 
         self.trading_type = trading_type
 
@@ -75,7 +76,7 @@ class CoinbaseExchangeClient(AuthBase):
         # sequence number for order book
         self.seqnum: Dict[Instrument, int] = {}
 
-    def __call__(self, request):
+    def __call__(self, request):  # type: ignore
         # This is used by `requests` to sign the requests
         # in the coinbase-specified auth scheme
         timestamp = str(time.time())
@@ -100,21 +101,21 @@ class CoinbaseExchangeClient(AuthBase):
         )
         return request
 
-    def _products(self):
+    def _products(self) -> dict:
         """Fetch list of products from coinbase rest api"""
         return requests.get("{}/{}".format(self.api_url, "products"), auth=self).json()
 
-    def _accounts(self):
+    def _accounts(self) -> dict:
         """Fetch list of accounts from coinbase rest api"""
         return requests.get("{}/{}".format(self.api_url, "accounts"), auth=self).json()
 
-    def _account(self, account_id):
+    def _account(self, account_id: str) -> dict:
         """Fetch single account info from coinbase rest api"""
         return requests.get(
             "{}/{}/{}".format(self.api_url, "accounts", account_id), auth=self
         ).json()
 
-    def _newOrder(self, order_jsn):
+    def _newOrder(self, order_jsn: dict) -> str:
         """create a new order"""
 
         # post my order to the rest endpoint
@@ -131,7 +132,7 @@ class CoinbaseExchangeClient(AuthBase):
         print(resp.text)
         return ""
 
-    def _cancelOrder(self, order_jsn):
+    def _cancelOrder(self, order_jsn: dict) -> bool:
         """delete an existing order"""
         # delete order with given order id
         resp = requests.delete(
@@ -147,14 +148,14 @@ class CoinbaseExchangeClient(AuthBase):
         # otherwise return false
         return False
 
-    def _orderBook(self, id):
+    def _orderBook(self, id: str) -> dict:
         # fetch an instrument's level 3 order book from the rest api
         return requests.get(
             "{}/{}/{}/book?level=3".format(self.api_url, "products", id), auth=self
         ).json()
 
     @lru_cache(None)
-    def instruments(self):
+    def instruments(self) -> List[Instrument]:
         """construct a list of instruments from the coinbase-returned json list of instruments"""
         ret = []
 
@@ -183,12 +184,12 @@ class CoinbaseExchangeClient(AuthBase):
         return ret
 
     @lru_cache(None)
-    def currency(self, symbol):
+    def currency(self, symbol: str) -> Instrument:
         # construct a base currency from the symbol
         return Instrument(name=symbol, type=InstrumentType.CURRENCY)
 
     @lru_cache(None)
-    def accounts(self):
+    def accounts(self) -> List[Account]:
         """fetch a list of coinbase accounts. These store quantities of InstrumentType.CURRENCY"""
         ret = []
 
@@ -229,7 +230,7 @@ class CoinbaseExchangeClient(AuthBase):
                 # ret.append(acc)
         return ret
 
-    def newOrder(self, order: Order):
+    def newOrder(self, order: Order) -> bool:
         """given an aat Order, construct a coinbase order json"""
         jsn: Dict[str, Union[str, int, float]] = {}
         jsn["product_id"] = order.instrument.name
@@ -289,7 +290,7 @@ class CoinbaseExchangeClient(AuthBase):
         # otherwise return false indicating rejected
         return False
 
-    def cancelOrder(self, order: Order):
+    def cancelOrder(self, order: Order) -> bool:
         # given an aat Order, convert to json and cancel
         jsn = {}
 

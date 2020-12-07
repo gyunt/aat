@@ -4,7 +4,7 @@ from .cpp import _CPP, _make_cpp_exchangetype
 class ExchangeType(object):
     __slots__ = ["__name"]
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args, **kwargs):  # type: ignore
         if _CPP:
             return _make_cpp_exchangetype(*args, **kwargs)
         return super(ExchangeType, cls).__new__(cls)
@@ -20,7 +20,9 @@ class ExchangeType(object):
     def name(self) -> str:
         return self.__name
 
-    def __eq__(self, other: ExchangeType) -> bool:
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, ExchangeType):
+            return False
         return self.name == other.name
 
     def __bool__(self) -> bool:

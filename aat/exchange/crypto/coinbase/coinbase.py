@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import Any, List, AsyncGenerator, Coroutine
 
 from aat.core import ExchangeType, Order, Instrument, Account
 from aat.config import TradingType, InstrumentType
@@ -18,7 +18,7 @@ class CoinbaseProExchange(Exchange):
         api_key:str = "",
         api_secret:str = "",
         api_passphrase:str = "",
-        **kwargs
+        **kwargs: dict
     ) -> None:
         self._trading_type = trading_type
         self._verbose = verbose
@@ -81,7 +81,7 @@ class CoinbaseProExchange(Exchange):
     # ******************* #
     # Market Data Methods #
     # ******************* #
-    async def tick(self) -> None:
+    async def tick(self) -> AsyncGenerator:
         """return data from exchange"""
 
         # First, roll through order book snapshot
@@ -92,7 +92,7 @@ class CoinbaseProExchange(Exchange):
         async for tick in self._client.websocket(self._subscriptions):
             yield tick
 
-    async def subscribe(self, instrument):
+    async def subscribe(self, instrument: Instrument) -> None:
         # can only subscribe to pair data
         if instrument.type == InstrumentType.PAIR:
             self._subscriptions.append(instrument)
@@ -102,9 +102,9 @@ class CoinbaseProExchange(Exchange):
     # ******************* #
     async def accounts(self) -> List[Account]:
         """get accounts from source"""
-        return self._client.accounts()
+        return await self._client.accounts()
 
-    async def newOrder(self, order) -> bool:
+    async def newOrder(self, order: Order) -> bool:
         """submit a new order to the exchange. should set the given order's `id` field to exchange-assigned id"""
         return await self._client.newOrder(order)
 

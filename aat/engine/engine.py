@@ -21,6 +21,7 @@ from tornado.web import (
     RedirectHandler,
     Application as TornadoApplication,
 )
+from typing import AsyncFunction, AsyncGenerator, Callable
 
 try:
     from perspective import (  # type: ignore
@@ -98,7 +99,7 @@ class TradingEngine(Application):
                 raise TraitError(f"Invalid exchange type: {exch}")
         return proposal["value"]
 
-    def __init__(self, **config) -> None:
+    def __init__(self, **config: dict) -> None:
         # get port for API access
         self.port = config.get("general", {}).get("port", self.port)
 
@@ -251,10 +252,10 @@ class TradingEngine(Application):
 
             self.api_application.listen(self.port)
 
-    def _offline(self):
+    def _offline(self) -> bool:
         return self.trading_type in (TradingType.BACKTEST, TradingType.SIMULATION)
 
-    def registerHandler(self, handler):
+    def registerHandler(self, handler: Callable) -> Callable:
         """register a handler and all callbacks that handler implements
 
         Args:
@@ -283,13 +284,13 @@ class TradingEngine(Application):
             return handler
         return None
 
-    def _make_async(self, function):
+    def _make_async(self, function: Callable) -> AsyncFunction:
         async def _wrapper(event):
             return await self.event_loop.run_in_executor(self.executor, function, event)
 
         return _wrapper
 
-    def registerCallback(self, event_type, callback, handler=None):
+    def registerCallback(self, event_type: EventType, callback: Callable, handler=None) -> None:
         """register a callback for a given event type
 
         Args:
@@ -306,15 +307,15 @@ class TradingEngine(Application):
             return True
         return False
 
-    def pushEvent(self, event):
+    def pushEvent(self, event: Event) -> None:
         """push non-exchange event into the queue"""
         self._queued_events.append(event)
 
-    def pushTargetedEvent(self, strategy, event):
+    def pushTargetedEvent(self, strategy: Strategy, event: Event) -> None:
         """push non-exchange event targeted to a specific strat into the queue"""
         self._queued_targeted_events.append((strategy, event))
 
-    async def run(self):
+    async def run(self) -> None:
         """run the engine"""
         # setup future queue
         self._queued_events = deque()
@@ -423,7 +424,7 @@ class TradingEngine(Application):
         # Before engine shutdown, send an exit event
         await self.processEvent(Event(type=EventType.EXIT, target=None))
 
-    async def processEvent(self, event: Event, strategy=None):
+    async def processEvent(self, event: Event, strategy=None) -> None:
         """send an event to all registered event handlers
 
         Arguments:
@@ -475,7 +476,7 @@ class TradingEngine(Application):
                 )
                 await asyncio.sleep(1)
 
-    async def tick(self):
+    async def tick(self) -> AsyncGenerator:
         """helper method to ensure periodic methods execute periodically in absence
         of market data"""
 
@@ -487,7 +488,7 @@ class TradingEngine(Application):
             yield Event(type=EventType.HEARTBEAT, target=None)
             await asyncio.sleep(1)
 
-    def now(self):
+    def now(self) -> datetime:
         """Return the current datetime. Useful to avoid code changes between
         live trading and backtesting. Defaults to `datetime.now`"""
         return (
@@ -496,7 +497,7 @@ class TradingEngine(Application):
             else datetime.now()
         )
 
-    def start(self):
+    def start(self) -> None:
         try:
             # if self.event_loop.is_running():
             #     # return future

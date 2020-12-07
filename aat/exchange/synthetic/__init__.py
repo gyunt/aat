@@ -25,13 +25,12 @@ class SyntheticExchange(Exchange):
 
     def __init__(
         self,
-        trading_type=None,
-        verbose=False,
-        inst_count=3,
-        cycles=10000,
-        positions=False,
-        **kwargs
-    ):
+        trading_type: TradingType =None,
+        verbose:bool=False,
+        inst_count:int=3,
+        cycles:int=10000,
+        positions:bool=False
+    ) -> None:
         """A synthetic exchange. Runs a limit order book for a number of randomly generated assets,
         takes random walks.
 
@@ -72,7 +71,7 @@ class SyntheticExchange(Exchange):
 
         self._generate_positions = positions
 
-    def _seed(self, symbols=None):
+    def _seed(self, symbols=None) -> None:
         self._instruments = {
             symbol: Instrument(symbol)
             for symbol in symbols or _getName(self._inst_count)
@@ -85,7 +84,7 @@ class SyntheticExchange(Exchange):
         }
         self._seedOrders()
 
-    def _seedOrders(self):
+    def _seedOrders(self) -> None:
         # seed all orderbooks
         for instrument, orderbook in self._orderbooks.items():
 
@@ -116,7 +115,7 @@ class SyntheticExchange(Exchange):
                 start = round(start + increment, 2)
                 self._id += 1
 
-    def _reseed(self, instrument, side):
+    def _reseed(self, instrument: Instrument, side: Side) -> None:
         print("reseeding synthetic exchange...")
         # reseed
         orderbook = self._orderbooks[instrument]
@@ -142,12 +141,12 @@ class SyntheticExchange(Exchange):
             orderbook.add(order)
             start = round(start + increment, 2)
 
-    def _jumptime(self, order):
+    def _jumptime(self, order: Order) -> None:
         if self._trading_type == TradingType.BACKTEST:
             order.timestamp = self._time
             self._time += timedelta(seconds=randint(25, 30))
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         ret = ""
         for ticker, orderbook in self._orderbooks.items():
             ret += (
@@ -161,7 +160,7 @@ class SyntheticExchange(Exchange):
     # *************** #
     # General methods #
     # *************** #
-    async def connect(self):
+    async def connect(self) -> None:
         """nothing to connect to"""
         self._seed()
 
@@ -169,14 +168,14 @@ class SyntheticExchange(Exchange):
         for orderbook in self._orderbooks.values():
             orderbook.setCallback(lambda event: self._events.append(event))
 
-    async def instruments(self):
+    async def instruments(self) -> List[Instrument]:
         """nothing to connect to"""
         return self._instruments
 
     # ************ #
     # Get snapshot #
     # ************ #
-    def snapshot(self):
+    def snapshot(self) -> None:
         # first return all seeded orders
         for _, orderbook in self._orderbooks.items():
             for order in orderbook:
@@ -185,7 +184,7 @@ class SyntheticExchange(Exchange):
     # ******************* #
     # Market Data Methods #
     # ******************* #
-    async def tick(self, snapshot=False):
+    async def tick(self, snapshot=False) -> None:
         # first return all seeded orders if snapshot is false
         if snapshot is False:
             for _, orderbook in self._orderbooks.items():

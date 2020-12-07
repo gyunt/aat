@@ -1,5 +1,5 @@
 from abc import ABCMeta
-from typing import List
+from typing import List, AsyncGenerator, Any
 
 from aat import Instrument, Event
 
@@ -15,5 +15,5 @@ class _MarketData(metaclass=ABCMeta):
     async def subscribe(self, instrument) -> None:
         """subscribe to market data for a given instrument"""
 
-    async def tick(self) -> Event:
+    async def tick(self) -> AsyncGenerator[Any, Event]:
         """return data from exchange"""

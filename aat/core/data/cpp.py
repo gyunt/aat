@@ -27,17 +27,17 @@ def _make_cpp_event(type, target):
 
 
 def _make_cpp_order(
-    volume,
-    price,
-    side,
-    instrument,
+    volume: float,
+    price: float,
+    side: Side,
+    instrument: Instrument,
     exchange=ExchangeType(""),
     notional=0.0,
-    order_type=OrderType.MARKET,
-    flag=OrderFlag.NONE,
-    stop_target=None,
-    id=None,
-    timestamp=None,
+    order_type:OrderType=OrderType.MARKET,
+    flag:OrderFlag=OrderFlag.NONE,
+    stop_target:Optional[Order]=None,
+    id:str=None,
+    timestamp:datetime=None,
 ):
     """helper method to ensure all arguments are setup"""
     return OrderCpp(

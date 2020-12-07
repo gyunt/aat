@@ -28,7 +28,7 @@ class StrategyManagerOrderEntryMixin(object):
     #####################
     # TODO ugly private method
 
-    async def _onBought(self, strategy, trade: Trade):
+    async def _onBought(self, strategy, trade: Trade) -> None:
         # append to list of trades
         self._strategy_trades[strategy].append(trade)
 
@@ -40,7 +40,7 @@ class StrategyManagerOrderEntryMixin(object):
         self._alerted_events[ev] = (strategy, trade.my_order)
 
     # TODO ugly private method
-    async def _onSold(self, strategy, trade: Trade):
+    async def _onSold(self, strategy, trade: Trade) -> None:
         # append to list of trades
         self._strategy_trades[strategy].append(trade)
 
@@ -53,7 +53,7 @@ class StrategyManagerOrderEntryMixin(object):
 
     # TODO ugly private method
 
-    async def _onReceived(self, strategy, order: Order):
+    async def _onReceived(self, strategy, order: Order) -> None:
         # push event to loop
         ev = Event(type=Event.Types.RECEIVED, target=order)
         self._engine.pushTargetedEvent(strategy, ev)
@@ -61,7 +61,7 @@ class StrategyManagerOrderEntryMixin(object):
         # synchronize state when engine processes this
         self._alerted_events[ev] = (strategy, order)
 
-    async def _onCanceled(self, strategy, order: Order):
+    async def _onCanceled(self, strategy, order: Order) -> None:
         # push event to loop
         ev = Event(type=Event.Types.CANCELED, target=order)
         self._engine.pushTargetedEvent(strategy, ev)
@@ -69,7 +69,7 @@ class StrategyManagerOrderEntryMixin(object):
         # synchronize state when engine processes this
         self._alerted_events[ev] = (strategy, order)
 
-    async def _onRejected(self, strategy, order):
+    async def _onRejected(self, strategy, order) -> None:
         # push event to loop
         ev = Event(type=Event.Types.REJECTED, target=order)
         self._engine.pushTargetedEvent(strategy, ev)
@@ -78,7 +78,7 @@ class StrategyManagerOrderEntryMixin(object):
     # Order Entry Methods *
     # *********************
 
-    async def newOrder(self, strategy, order: Order):
+    async def newOrder(self, strategy, order: Order) -> bool:
         """helper method, defers to buy/sell"""
         # ensure has list
         if strategy not in self._strategy_open_orders:
@@ -112,7 +112,7 @@ class StrategyManagerOrderEntryMixin(object):
         await self._onRejected(strategy, order)
         return order
 
-    async def cancelOrder(self, strategy, order: Order):
+    async def cancelOrder(self, strategy, order: Order) -> bool:
         """cancel an open order"""
         ret = await self._order_mgr.cancelOrder(strategy, order)
         if ret:
@@ -213,7 +213,7 @@ class StrategyManagerOrderEntryMixin(object):
     #########################
     # Order Entry Callbacks #
     #########################
-    async def onTraded(self, event: Event):
+    async def onTraded(self, event: Event) -> None:
         if event in self._alerted_events:
             strategy, order = self._alerted_events[event]
             # remove from list of open orders if done
@@ -226,7 +226,7 @@ class StrategyManagerOrderEntryMixin(object):
         await self._risk_mgr.onTraded(event, strategy)
         await self._order_mgr.onTraded(event, strategy)
 
-    async def onReceived(self, event: Event):
+    async def onReceived(self, event: Event) -> None:
         # synchronize state
         if event in self._alerted_events:
             strategy, order = self._alerted_events[event]
@@ -238,7 +238,7 @@ class StrategyManagerOrderEntryMixin(object):
         await self._risk_mgr.onReceived(event, strategy)
         await self._order_mgr.onReceived(event, strategy)
 
-    async def onRejected(self, event: Event):
+    async def onRejected(self, event: Event) -> None:
         # synchronize state
         if event in self._alerted_events:
             strategy, order = self._alerted_events[event]
@@ -251,7 +251,7 @@ class StrategyManagerOrderEntryMixin(object):
         await self._risk_mgr.onRejected(event, strategy)
         await self._order_mgr.onRejected(event, strategy)
 
-    async def onCanceled(self, event: Event):
+    async def onCanceled(self, event: Event) -> None:
         # synchronize state
         if event in self._alerted_events:
             strategy, order = self._alerted_events[event]

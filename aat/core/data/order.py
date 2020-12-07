@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Mapping, Union, Type
+from typing import Mapping, Union, Type, Optional
 
 from .cpp import _CPP, _make_cpp_order
 from ..exchange import ExchangeType
@@ -30,7 +30,7 @@ class Order(object):
     Sides = Side
     Flags = OrderFlag
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args, **kwargs):  # type: ignore
         if _CPP:
             return _make_cpp_order(*args, **kwargs)
         return super(Order, cls).__new__(cls)
@@ -41,11 +41,11 @@ class Order(object):
         price: float,
         side: Side,
         instrument: Instrument,
-        exchange=ExchangeType(""),
-        notional=0.0,
-        order_type=OrderType.MARKET,
-        flag=OrderFlag.NONE,
-        stop_target=None,
+        exchange:ExchangeType=ExchangeType(""),
+        notional:float=0.0,
+        order_type:OrderType=OrderType.MARKET,
+        flag:OrderFlag=OrderFlag.NONE,
+        stop_target:Optional[Order]=None,
         **kwargs,
     ) -> None:
         self.__id = kwargs.get(

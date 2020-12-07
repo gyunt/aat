@@ -13,7 +13,7 @@ class Event(object):
     # for convenience
     Types = EventType
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args, **kwargs):  # type: ignore
         if _CPP:
             return _make_cpp_event(*args, **kwargs)
         return super(Event, cls).__new__(cls)

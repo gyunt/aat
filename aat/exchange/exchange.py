@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Type
 
 from aat.core import ExchangeType
 
@@ -26,7 +27,7 @@ class Exchange(_MarketData, _OrderEntry):
         return self._exchange
 
     @staticmethod
-    def registerExchange(exchange_name, clazz):
+    def registerExchange(exchange_name, clazz: Type) -> None:
         _EXCHANGES[exchange_name] = clazz
 
     @staticmethod

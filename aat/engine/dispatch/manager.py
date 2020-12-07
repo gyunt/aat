@@ -10,6 +10,7 @@ from .risk import StrategyManagerRiskMixin
 from .utils import StrategyManagerUtilsMixin
 
 from aat.config import TradingType
+from aat.core import Event
 from aat.core.handler import EventHandler
 from aat.exchange import Exchange
 
@@ -31,7 +32,7 @@ class StrategyManager(
         trading_type: TradingType,
         exchanges: List[Exchange],
         load_accounts: bool = False,
-    ):
+    ) -> None:
         """The Manager sits between the strategies and the engine and manages state
 
         Args:
@@ -81,65 +82,65 @@ class StrategyManager(
     # ********* #
     # Accessors #
     # ********* #
-    def riskManager(self):
+    def riskManager(self) -> RiskManager:
         return self._risk_mgr
 
-    def orderManager(self):
+    def orderManager(self) -> OrderManager:
         return self._order_mgr
 
-    def portfolioManager(self):
+    def portfolioManager(self) -> PortfolioManager:
         return self._portfolio_mgr
 
-    def strategies(self):
+    def strategies(self) -> List[Strategy]:
         return self._engine.strategies
 
-    def exchanges(self):
+    def exchanges(self) -> List[ExchangeType]:
         return self._engine.exchanges
 
     # ********************* #
     # EventHandler methods *
     # **********************
-    async def onTrade(self, event):
+    async def onTrade(self, event: Event) -> None:
         await self._portfolio_mgr.onTrade(event)
         await self._risk_mgr.onTrade(event)
         await self._order_mgr.onTrade(event)
 
-    async def onOpen(self, event):
+    async def onOpen(self, event: Event) -> None:
         await self._portfolio_mgr.onOpen(event)
         await self._risk_mgr.onOpen(event)
         await self._order_mgr.onOpen(event)
 
-    async def onCancel(self, event):
+    async def onCancel(self, event: Event) -> None:
         await self._portfolio_mgr.onCancel(event)
         await self._risk_mgr.onCancel(event)
         await self._order_mgr.onCancel(event)
 
-    async def onChange(self, event):
+    async def onChange(self, event: Event) -> None:
         await self._portfolio_mgr.onChange(event)
         await self._risk_mgr.onChange(event)
         await self._order_mgr.onChange(event)
 
-    async def onFill(self, event):
+    async def onFill(self, event: Event) -> None:
         await self._portfolio_mgr.onFill(event)
         await self._risk_mgr.onFill(event)
         await self._order_mgr.onFill(event)
 
-    async def onHalt(self, event):
+    async def onHalt(self, event: Event) -> None:
         await self._portfolio_mgr.onHalt(event)
         await self._risk_mgr.onHalt(event)
         await self._order_mgr.onHalt(event)
 
-    async def onContinue(self, event):
+    async def onContinue(self, event: Event) -> None:
         await self._portfolio_mgr.onContinue(event)
         await self._risk_mgr.onContinue(event)
         await self._order_mgr.onContinue(event)
 
-    async def onData(self, event):
+    async def onData(self, event: Event) -> None:
         await self._portfolio_mgr.onData(event)
         await self._risk_mgr.onData(event)
         await self._order_mgr.onData(event)
 
-    async def onError(self, event):
+    async def onError(self, event: Event) -> None:
         print("\n\nA Fatal Error has occurred:")
         traceback.print_exception(
             type(event.target.exception),
@@ -148,12 +149,12 @@ class StrategyManager(
         )
         sys.exit(1)
 
-    async def onExit(self, event):
+    async def onExit(self, event: Event) -> None:
         await self._portfolio_mgr.onExit(event)
         await self._risk_mgr.onExit(event)
         await self._order_mgr.onExit(event)
 
-    async def onStart(self, event):
+    async def onStart(self, event: Event) -> None:
         # Initialize strategies
         self._portfolio_mgr.updateStrategies(self.strategies())
 

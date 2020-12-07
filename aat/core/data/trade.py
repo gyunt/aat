@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Mapping, Type, Union, List, Dict
+from typing import Mapping, Type, Union, List, Dict, Optional
 
 from .cpp import _CPP, _make_cpp_trade
 from .order import Order
@@ -23,12 +23,12 @@ class Trade(object):
     # for convenience
     Types = DataType
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args, **kwargs):  # type: ignore
         if _CPP:
             return _make_cpp_trade(*args, **kwargs)
         return super(Trade, cls).__new__(cls)
 
-    def __init__(self, volume, price, taker_order, maker_orders=None, **kwargs) -> None:
+    def __init__(self, volume:float, price:float, taker_order:Order, maker_orders: Optional[List[Order]]=None, **kwargs) -> None:
         self.__id = kwargs.get(
             "id", "0"
         )  # on construction, provide no ID until exchange assigns one

@@ -10,26 +10,24 @@ if TYPE_CHECKING:
 class ExchangeDB(object):
     """exchange registration"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._name_map: Mapping[str, "ExchangeType"] = {}
         self._map: Mapping["Instrument", "ExchangeType"] = {}
 
-    def add(self, exchange):
+    def add(self, exchange: "ExchangeType") -> None:
         if exchange.name in self._name_map:
             return
         self._name_map[exchange.name] = exchange
 
     def instruments(
         self,
-        name="",
+        name:str="",
         type: InstrumentType = InstrumentType.EQUITY,
         exchange: ExchangeType = ExchangeType(""),
-        *args,
-        **kwargs
-    ):
+    ) -> None:
         raise NotImplementedError()
 
-    def get(self, name="", instrument: "Instrument" = None, *args, **kwargs):
+    def get(self, name:str="", instrument: "Instrument" = None) -> "ExchangeType":
         if name:
             return self._name_map[name]
         raise NotImplementedError()
