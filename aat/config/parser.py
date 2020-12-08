@@ -33,7 +33,7 @@ def _config_to_dict(
     return ret
 
 
-def _args_to_dict(args):
+def _args_to_dict(args) -> dict:
     ret = {}
     ret["general"] = {}
     ret["general"]["verbose"] = args.verbose

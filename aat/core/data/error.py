@@ -1,5 +1,6 @@
 from datetime import datetime
 from traceback import format_exception
+from typing import Any, Callable
 from ...config import DataType
 
 
@@ -29,23 +30,23 @@ class Error(object):
         return self.__timestamp
 
     @property
-    def type(self):
+    def type(self) -> DataType:
         return self.__type
 
     @property
-    def target(self):
+    def target(self) -> Any:
         return self.__target
 
     @property
-    def exception(self):
+    def exception(self) -> Exception:
         return self.__exception
 
     @property
-    def callback(self):
+    def callback(self) -> Callable:
         return self.__callback
 
     @property
-    def handler(self):
+    def handler(self) -> Callable:
         return self.__handler
 
     def __repr__(self) -> str:

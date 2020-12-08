@@ -28,14 +28,14 @@ class ExchangeType(object):
     def __bool__(self) -> bool:
         return bool(self.__name)
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(str(self))
 
-    def json(self):
+    def json(self) -> dict:
         return {"name": self.name}
 
     @staticmethod
-    def fromJson(jsn: dict):
+    def fromJson(jsn: dict) -> "ExchangeType":
         return ExchangeType(name=jsn["name"])
 
     def __repr__(self) -> str:

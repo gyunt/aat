@@ -42,7 +42,7 @@ class IEX(Exchange):
         start_date=None,
         end_date=None,
         cache_data=True,
-    ):
+    ) -> None:
         super().__init__(ExchangeType("iex"))
         self._trading_type = trading_type
         self._verbose = verbose
@@ -121,7 +121,7 @@ class IEX(Exchange):
             instruments.append(inst)
         return instruments
 
-    async def subscribe(self, instrument):
+    async def subscribe(self, instrument: Instrument) -> None:
         self._subscriptions.append(instrument)
 
     async def tick(self):
@@ -309,7 +309,7 @@ class IEX(Exchange):
     # ******************* #
     # Order Entry Methods #
     # ******************* #
-    async def newOrder(self, order: Order):
+    async def newOrder(self, order: Order) -> bool:
         """submit a new order to the exchange. should set the given order's `id` field to exchange-assigned id
 
         For MarketData-only, can just return None
@@ -322,7 +322,7 @@ class IEX(Exchange):
         self._queued_orders.append(order)
         return True
 
-    async def cancelOrder(self, order: Order):
+    async def cancelOrder(self, order: Order) -> bool:
         # Can't cancel, orders execute immediately
         # TODO limit orders
         return False

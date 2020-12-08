@@ -3,6 +3,7 @@ from .risk import RiskManager
 
 class StrategyManagerRiskMixin(object):
     _risk_mgr: RiskManager
+
     # *********************
     # Risk Methods        *
     # *********************

@@ -1,5 +1,5 @@
 import pandas as pd  # type: ignore
-from typing import Optional, List
+from typing import Optional, List, Union
 
 from aat.core import Event, Trade, Instrument, ExchangeType, Position
 from aat.core.handler import EventHandler

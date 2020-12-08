@@ -1,5 +1,5 @@
 from queue import Queue
-from typing import Callable, List, Mapping, Optional
+from typing import Callable, List, Mapping, Optional, Tuple
 
 from aat.core import ExchangeType, Order, Instrument, Event
 from aat.config import Side, OrderFlag, OrderType
@@ -61,7 +61,7 @@ class OrderBook(OrderBookBase):
         instrument: Instrument,
         exchange_name: str = "",
         callback: Optional[Callable] = None,
-    ):
+    ) -> None:
 
         self._instrument = instrument
         self._exchange_name: ExchangeType = (
@@ -150,7 +150,7 @@ class OrderBook(OrderBookBase):
         tob = self.topOfBook()
         return tob[Side.SELL][0] - tob[Side.BUY][0]
 
-    def level(self, level: int = 0, price: float = None):
+    def level(self, level: int = 0, price: float = None) -> Tuple:
         """return book level
 
         Args:
@@ -195,7 +195,7 @@ class OrderBook(OrderBookBase):
             else PriceLevelRO(0.0, 0.0, 0),
         )
 
-    def bids(self, levels=0):
+    def bids(self, levels: int = 0):
         """return bid levels starting at top
 
         Args:
@@ -224,7 +224,7 @@ class OrderBook(OrderBookBase):
             for i in range(levels)
         ]
 
-    def asks(self, levels=0):
+    def asks(self, levels: int = 0):
         """return ask levels starting at top
 
         Args:
@@ -253,7 +253,7 @@ class OrderBook(OrderBookBase):
             for i in range(levels)
         ]
 
-    def levels(self, levels=0):
+    def levels(self, levels: int = 0):
         """return book levels starting at top
 
         Args:

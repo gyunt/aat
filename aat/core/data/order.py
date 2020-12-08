@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Mapping, Union, Type, Optional
+from typing import Mapping, Union, Type, Optional, Tuple, Dict
 
 from .cpp import _CPP, _make_cpp_order
 from ..exchange import ExchangeType
@@ -30,7 +30,7 @@ class Order(object):
     Sides = Side
     Flags = OrderFlag
 
-    def __new__(cls, *args, **kwargs):  # type: ignore
+    def __new__(cls: Type, *args: Tuple, **kwargs: Dict):
         if _CPP:
             return _make_cpp_order(*args, **kwargs)
         return super(Order, cls).__new__(cls)
@@ -45,7 +45,7 @@ class Order(object):
         notional: float = 0.0,
         order_type: OrderType = OrderType.MARKET,
         flag: OrderFlag = OrderFlag.NONE,
-        stop_target: Optional[Order] = None,
+        stop_target: Optional["Order"] = None,
         **kwargs,
     ) -> None:
         self.__id = kwargs.get(
@@ -198,7 +198,7 @@ class Order(object):
     def __repr__(self) -> str:
         return f"Order( instrument={self.instrument}, timestamp={self.timestamp}, {self.volume}@{self.price}, side={self.side}, exchange={self.exchange})"
 
-    def __eq__(self, other: Order) -> bool:
+    def __eq__(self, other: object) -> bool:
         assert isinstance(other, Order)
         return (
             self.id == other.id
@@ -229,7 +229,7 @@ class Order(object):
         }
 
     @staticmethod
-    def fromJson(jsn: dict) -> Order:
+    def fromJson(jsn: dict) -> "Order":
         kwargs = {}
         kwargs["volume"] = jsn["volume"]
         kwargs["price"] = jsn["price"]

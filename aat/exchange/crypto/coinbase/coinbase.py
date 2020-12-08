@@ -1,5 +1,5 @@
 import os
-from typing import Any, List, AsyncGenerator, Coroutine
+from typing import List, AsyncGenerator
 
 from aat.core import ExchangeType, Order, Instrument, Account
 from aat.config import TradingType, InstrumentType

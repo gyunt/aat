@@ -1,4 +1,4 @@
-from typing import Callable, Iterator, List
+from typing import Callable, List
 
 import os
 import itertools

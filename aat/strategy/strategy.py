@@ -1,5 +1,6 @@
 import asyncio
 from abc import abstractmethod
+from typing import Tuple, Dict, Union
 from .calculations import CalculationsMixin
 from .portfolio import StrategyPortfolioMixin
 from .risk import StrategyRiskMixin
@@ -18,14 +19,14 @@ class Strategy(
 ):
     _ID_GENERATOR = id_generator()
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Tuple, **kwargs: Dict) -> None:
         super().__init__(*args, **kwargs)
         self.__inst = Strategy._ID_GENERATOR()
 
-    def name(self):
+    def name(self) -> str:
         return repr(self)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "{}-{}".format(self.__class__.__name__, self.__inst)
 
     #########################
@@ -82,7 +83,7 @@ class Strategy(
     #########################
     # Order Entry Callbacks #
     #########################
-    async def onBought(self, event: Event):
+    async def onBought(self, event: Event) -> None:
         """callback method for if your order executes (buy)
 
         Args:
@@ -90,7 +91,7 @@ class Strategy(
         """
         pass
 
-    async def onSold(self, event: Event):
+    async def onSold(self, event: Event) -> None:
         """callback method for if your order executes (sell)
 
         Args:
@@ -98,7 +99,7 @@ class Strategy(
         """
         pass
 
-    async def onTraded(self, event: Event):
+    async def onTraded(self, event: Event) -> None:
         """callback method for if your order executes (either buy or sell)
 
         Args:
@@ -106,7 +107,7 @@ class Strategy(
         """
         pass
 
-    async def onRejected(self, event: Event):
+    async def onRejected(self, event: Event) -> None:
         """callback method for if your order fails to execute
 
         Args:
@@ -114,7 +115,7 @@ class Strategy(
         """
         pass
 
-    async def onCanceled(self, event: Event):
+    async def onCanceled(self, event: Event) -> None:
         """callback method for if your order is canceled
 
         Args:
@@ -125,12 +126,12 @@ class Strategy(
     #######################
     # Order Entry Methods #
     #######################
-    async def newOrder(self, order: Order):
+    async def newOrder(self, order: Order) -> Union[None, bool]:
         """helper method, defers to buy/sell"""
         # defer to execution
         return await self._manager.newOrder(self, order)
 
-    async def cancelOrder(self, order: Order):
+    async def cancelOrder(self, order: Order) -> Union[None, bool]:
         """cancel an open order
 
         Args:
@@ -141,7 +142,7 @@ class Strategy(
         # defer to execution
         return await self._manager.cancelOrder(self, order)
 
-    async def cancel(self, order: Order):
+    async def cancel(self, order: Order) -> Union[None, bool]:
         """cancel an open order
 
         Args:
@@ -152,7 +153,7 @@ class Strategy(
         # defer to execution
         return await self._manager.cancelOrder(self, order)
 
-    async def buy(self, order: Order):
+    async def buy(self, order: Order) -> Union[None, bool]:
         """submit a buy order. Note that this is merely a request for an order, it provides no guarantees that the order will
         execute. At a later point, if your order executes, you will receive an alert via the `bought` method
 
@@ -163,7 +164,7 @@ class Strategy(
         """
         return await self._manager.newOrder(self, order)
 
-    async def sell(self, order: Order):
+    async def sell(self, order: Order) -> Union[None, bool]:
         """submit a sell order. Note that this is merely a request for an order, it provides no guarantees that the order will
         execute. At a later point, if your order executes, you will receive an alert via the `sold` method
 
@@ -174,7 +175,7 @@ class Strategy(
         """
         return await self._manager.newOrder(self, order)
 
-    async def cancelAll(self, instrument: Instrument = None):
+    async def cancelAll(self, instrument: Instrument = None) -> Union[None, bool]:
         """cancel all open orders. If argument is provided, cancel only orders for
         that instrument.
 
@@ -187,7 +188,7 @@ class Strategy(
         if orders:
             return await asyncio.gather(*(self.cancel(order) for order in orders))
 
-    async def closeAll(self, instrument: Instrument = None):
+    async def closeAll(self, instrument: Instrument = None) -> Union[None, bool]:
         """close all open postions immediately. If argument is provided, close only positions for
         that instrument.
 

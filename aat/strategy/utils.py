@@ -1,6 +1,11 @@
-from typing import Union, Callable, Optional, TYPE_CHECKING
+import asyncio
+
+from datetime import datetime
+from typing import Union, Callable, Optional, List, TYPE_CHECKING
 from ..config import Side, TradingType, ExitRoutine
-from ..core import Trade, Instrument, ExchangeType
+from ..core import Trade, Instrument, ExchangeType, Order
+from ..exchange import Exchange
+from ..engine.dispatch import Periodic
 
 
 if TYPE_CHECKING:
@@ -15,7 +20,7 @@ class StrategyUtilsMixin(object):
         instrument: Instrument = None,
         exchange: ExchangeType = None,
         side: Side = None,
-    ):
+    ) -> List[Order]:
         """select all open orders
 
         Args:
@@ -32,7 +37,7 @@ class StrategyUtilsMixin(object):
         instrument: Instrument = None,
         exchange: ExchangeType = None,
         side: Side = None,
-    ):
+    ) -> List[Order]:
         """select all past orders
 
         Args:
@@ -49,7 +54,7 @@ class StrategyUtilsMixin(object):
         instrument: Instrument = None,
         exchange: ExchangeType = None,
         side: Side = None,
-    ):
+    ) -> List[Trade]:
         """select all past trades
 
         Args:
@@ -68,20 +73,20 @@ class StrategyUtilsMixin(object):
         """Return the trading type, from TradingType enum"""
         return self._manager.tradingType()
 
-    def loop(self):
+    def loop(self) -> asyncio.AbstractEventLoop:
         """Return the event loop"""
         return self._manager.loop()
 
-    def now(self):
+    def now(self) -> datetime:
         """Return the current datetime. Useful to avoid code changes between
         live trading and backtesting. Defaults to `datetime.now`"""
         return self._manager.now()
 
-    def instruments(self, type=None, exchange=None):
+    def instruments(self, type=None, exchange=None) -> List[Instrument]:
         """Return list of all available instruments"""
         return Instrument._instrumentdb.instruments(type=type, exchange=exchange)
 
-    def exchanges(self, instrument_type=None):
+    def exchanges(self, instrument_type=None) -> List[Exchange]:
         """Return list of all available exchanges"""
         return list(
             set(
@@ -109,7 +114,7 @@ class StrategyUtilsMixin(object):
         second: Union[int, str] = 0,
         minute: Union[int, str] = "*",
         hour: Union[int, str] = "*",
-    ):
+    ) -> Periodic:
         """periodically run a given async function. NOTE: precise timing
         is NOT guaranteed due to event loop scheduling.
 
@@ -138,7 +143,7 @@ class StrategyUtilsMixin(object):
         end_minute: Optional[int] = None,
         end_hour: Optional[int] = None,
         on_end_of_day: ExitRoutine = ExitRoutine.NONE,
-    ):
+    ) -> None:
         """Restrict a strategy's trading hours to [start_hour:start_minute:start_second, end_hour:end_minute:end_second]
         NOTE: precise timing is NOT guaranteed due to event loop scheduling.
 
@@ -162,7 +167,7 @@ class StrategyUtilsMixin(object):
             on_end_of_day=on_end_of_day,
         )
 
-    def slippage(self, trade: Trade):
+    def slippage(self, trade: Trade) -> None:
         """method to inject slippage when backtesting
 
         Args:
@@ -172,7 +177,7 @@ class StrategyUtilsMixin(object):
         """
         pass
 
-    def transactionCost(self, trade: Trade):
+    def transactionCost(self, trade: Trade) -> None:
         """method to inject transaction costs when backtesting
 
         Args:

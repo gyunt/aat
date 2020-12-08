@@ -122,27 +122,27 @@ class EventHandler(metaclass=ABCMeta):
     #                                              #
     # NOTE: these should all be of the form onVerb #
     ################################################
-    async def onBought(self, event: Event):
+    async def onBought(self, event: Event) -> None:
         """Called on my order bought"""
         pass
 
-    async def onSold(self, event: Event):
+    async def onSold(self, event: Event) -> None:
         """Called on my order sold"""
         pass
 
-    async def onTraded(self, event: Event):
+    async def onTraded(self, event: Event) -> None:
         """Called on my order bought or sold"""
         pass
 
-    async def onReceived(self, event: Event):
+    async def onReceived(self, event: Event) -> None:
         """Called on my order received by exchange"""
         pass
 
-    async def onRejected(self, event: Event):
+    async def onRejected(self, event: Event) -> None:
         """Called on my order rejected"""
         pass
 
-    async def onCanceled(self, event: Event):
+    async def onCanceled(self, event: Event) -> None:
         """Called on my order canceled"""
         pass
 

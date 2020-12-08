@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Any, List, Callable, Union, Optional, TYPE_CHECKING
 
 from aat.config import ExitRoutine
-from aat.core import Instrument, ExchangeType, Event
+from aat.core import Instrument, ExchangeType, Event, Order, Trade
 from aat.exchange import Exchange
 from aat.config import InstrumentType, TradingType
 

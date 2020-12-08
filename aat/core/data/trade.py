@@ -3,6 +3,8 @@ from typing import Mapping, Type, Union, List, Dict, Optional
 
 from .cpp import _CPP, _make_cpp_trade
 from .order import Order
+from ..instrument import Instrument
+from ..exchange import ExchangeType
 from ...config import DataType, Side
 
 
@@ -64,23 +66,23 @@ class Trade(object):
         return self.taker_order.timestamp
 
     @property
-    def type(self):
+    def type(self) -> DataType:
         return self.__type
 
     @property
-    def volume(self):
+    def volume(self) -> float:
         return self.__volume
 
     @property
-    def price(self):
+    def price(self) -> float:
         return self.__price
 
     @property
-    def instrument(self):
+    def instrument(self) -> Instrument:
         return self.taker_order.instrument
 
     @property
-    def exchange(self):
+    def exchange(self) -> ExchangeType:
         return self.taker_order.exchange
 
     @property
@@ -127,7 +129,7 @@ class Trade(object):
     def __repr__(self) -> str:
         return f"Trade( id={self.id}, timestamp={self.timestamp}, {self.volume}@{self.price}, \n\ttaker_order={self.taker_order},\n\tmaker_orders={self.maker_orders}, )"
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: object) -> bool:
         assert isinstance(other, Trade)
         return self.id == other.id and self.timestamp == other.timestamp
 
@@ -165,7 +167,7 @@ class Trade(object):
         return ret
 
     @staticmethod
-    def fromJson(jsn):
+    def fromJson(jsn: dict) -> "Trade":
         ret = Trade(
             jsn["volume"],
             jsn["price"],

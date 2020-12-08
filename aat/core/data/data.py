@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Mapping, Union, Type, Optional
+from typing import Mapping, Union, Type, Optional, Any
 
 from .cpp import _CPP, _make_cpp_data
 from ..exchange import ExchangeType
@@ -54,19 +54,19 @@ class Data(object):
         return self.__timestamp
 
     @property
-    def type(self):
+    def type(self) -> DataType:
         return self.__type
 
     @property
-    def instrument(self):
+    def instrument(self) -> Instrument:
         return self.__instrument
 
     @property
-    def exchange(self):
+    def exchange(self) -> ExchangeType:
         return self.__exchange
 
     @property
-    def data(self):
+    def data(self) -> Any:
         return self.__data
 
     def __repr__(self) -> str:

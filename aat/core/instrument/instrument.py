@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Tuple, Dict, Type
 
 from .cpp import _CPP, _make_cpp_instrument
 from .db import InstrumentDB
@@ -45,7 +45,7 @@ class Instrument(object):
         "__option_type",
     ]
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls: Type, *args: Tuple, **kwargs: Dict) -> "Instrument":
         if cls._instrumentdb.instruments(*args, **kwargs):
             return cls._instrumentdb.get(*args, **kwargs)
 
@@ -64,8 +64,8 @@ class Instrument(object):
         name: str,
         type: InstrumentType = InstrumentType.EQUITY,
         exchange: ExchangeType = ExchangeType(""),
-        **kwargs,
-    ):
+        **kwargs: Dict,
+    ) -> None:
         """construct a new instrument instance
 
         Args:
@@ -257,69 +257,69 @@ class Instrument(object):
         return self.__type
 
     @property
-    def exchanges(self):
+    def exchanges(self) -> List[ExchangeType]:
         return self.__exchanges
 
     # ******** #
     # Optional #
     # ******** #
     @property
-    def brokerExchange(self):
+    def brokerExchange(self) -> Optional[ExchangeType]:
         return self.__brokerExchange
 
     @property
-    def brokerId(self):
+    def brokerId(self) -> str:
         return self.__brokerId
 
     @property
-    def currency(self):
+    def currency(self) -> Optional["Instrument"]:
         return self.__currency
 
     @property
-    def underlying(self):
+    def underlying(self) -> Optional["Instrument"]:
         return self.__underlying
 
     @property
-    def leg1(self):
+    def leg1(self) -> Optional["Instrument"]:
         return self.__leg1
 
     @property
-    def leg2(self):
+    def leg2(self) -> Optional["Instrument"]:
         return self.__leg2
 
     @property
-    def leg1_side(self):
+    def leg1_side(self) -> Optional[Side]:
         return self.__leg1_side
 
     @property
-    def leg2_side(self):
+    def leg2_side(self) -> Optional[Side]:
         return self.__leg2_side
 
     @property
-    def expiration(self):
+    def expiration(self) -> datetime:
         return self.__expiration
 
     @property
-    def unit_value(self):
+    def unit_value(self) -> float:
         return self.__unit_value
 
     @property
-    def price_increment(self):
+    def price_increment(self) -> float:
         return self.__price_increment
 
     @property
-    def option_type(self):
+    def option_type(self) -> Optional[OptionType]:
         return self.__option_type
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if other is None:
             return False
         return self.name == other.name and self.type == other.type
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(str(self))
 
-    def json(self):
+    def json(self) -> dict:
         return {
             "name": self.name,
             "type": self.type.value,
@@ -339,7 +339,7 @@ class Instrument(object):
         }
 
     @staticmethod
-    def fromJson(jsn):
+    def fromJson(jsn: dict) -> "Instrument":
         kwargs = {}
         kwargs["name"] = jsn["name"]
         kwargs["type"] = InstrumentType(jsn["type"])
@@ -383,5 +383,5 @@ class Instrument(object):
 
         return Instrument(**kwargs)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Instrument({self.name}-{self.type})"

@@ -1,4 +1,4 @@
-from typing import Mapping, Tuple, Optional, Dict, Tuple, List, TYPE_CHECKING
+from typing import Mapping, Optional, Dict, Tuple, List, TYPE_CHECKING
 from ..exchange import ExchangeType
 from ...config import InstrumentType
 
