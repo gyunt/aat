@@ -1,7 +1,7 @@
 from abc import abstractmethod
-from typing import Type
+from typing import Type, List, Optional
 
-from aat.core import ExchangeType
+from aat.core import ExchangeType, Instrument
 
 from .base.market_data import _MarketData
 from .base.order_entry import _OrderEntry
@@ -31,7 +31,7 @@ class Exchange(_MarketData, _OrderEntry):
         _EXCHANGES[exchange_name] = clazz
 
     @staticmethod
-    def exchanges(exchange=None):
+    def exchanges(exchange=None) -> List[ExchangeType]:
         if exchange:
             if exchange not in _EXCHANGES:
                 raise Exception(f"Unknown exchange type: {exchange}")
@@ -39,13 +39,13 @@ class Exchange(_MarketData, _OrderEntry):
         return list(_EXCHANGES.keys())
 
     @abstractmethod
-    async def connect(self):
+    async def connect(self) -> None:
         """connect to exchange. should be asynchronous.
 
         For OrderEntry-only, can just return None
         """
 
-    async def lookup(self, instrument):
+    async def lookup(self, instrument: Optional[Instrument]) -> List[Instrument]:
         """lookup an instrument on the exchange"""
         return []
 

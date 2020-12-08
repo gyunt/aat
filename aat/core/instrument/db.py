@@ -1,4 +1,4 @@
-from typing import Mapping, Tuple, TYPE_CHECKING
+from typing import Mapping, Tuple, Optional, Dict, Tuple, List, TYPE_CHECKING
 from ..exchange import ExchangeType
 from ...config import InstrumentType
 
@@ -10,11 +10,11 @@ if TYPE_CHECKING:
 class InstrumentDB(object):
     """instrument registration"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._name_map: Mapping[str, "Instrument"] = {}
         self._map: Mapping[Tuple[str, InstrumentType], "Instrument"] = {}
 
-    def add(self, instrument):
+    def add(self, instrument: "Instrument") -> None:
         if instrument.name in self._name_map:
             return
         self._name_map[instrument.name] = instrument
@@ -22,12 +22,12 @@ class InstrumentDB(object):
 
     def instruments(
         self,
-        name="",
+        name: str = "",
         type: InstrumentType = InstrumentType.EQUITY,
-        exchange: ExchangeType = ExchangeType(""),
-        *args,
-        **kwargs
-    ):
+        exchange: Optional[ExchangeType] = ExchangeType(""),
+        *args: Tuple,
+        **kwargs: Dict
+    ) -> List["Instrument"]:
         if not name and not type and not exchange:
             return list(self._map.values())
         elif name:
@@ -42,12 +42,12 @@ class InstrumentDB(object):
 
     def get(
         self,
-        name="",
+        name: str = "",
         type: InstrumentType = InstrumentType.EQUITY,
         exchange: ExchangeType = ExchangeType(""),
-        *args,
-        **kwargs
-    ):
+        *args: Tuple,
+        **kwargs: Dict
+    ) -> "Instrument":
         return self._name_map[name]
 
 

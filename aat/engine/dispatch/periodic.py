@@ -1,17 +1,18 @@
+import asyncio
 from datetime import datetime
-from typing import Callable, Awaitable, List
+from typing import Callable, Awaitable, List, Union
 from temporalcache.utils import should_expire  # type: ignore
 
 
 class Periodic(object):
     def __init__(
         self,
-        loop: str,
+        loop: asyncio.AbstractEventLoop,
         last_ts: datetime,
         function: Callable[Awaitable[None]],
-        second: int,
-        minute: int,
-        hour: int,
+        second: Union[int, str],
+        minute: Union[int, str],
+        hour: Union[int, str],
     ) -> None:
         self._loop = loop
         self._function: Callable[Awaitable[None]] = function

@@ -8,7 +8,7 @@ import time
 from datetime import datetime
 from functools import lru_cache
 from requests.auth import AuthBase
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Awaitable
 
 # from aat import Instrument, InstrumentType, Account, Position
 from aat import (
@@ -230,7 +230,7 @@ class CoinbaseExchangeClient(AuthBase):
                 # ret.append(acc)
         return ret
 
-    def newOrder(self, order: Order) -> bool:
+    async def newOrder(self, order: Order) -> bool:
         """given an aat Order, construct a coinbase order json"""
         jsn: Dict[str, Union[str, int, float]] = {}
         jsn["product_id"] = order.instrument.name
@@ -290,7 +290,7 @@ class CoinbaseExchangeClient(AuthBase):
         # otherwise return false indicating rejected
         return False
 
-    def cancelOrder(self, order: Order) -> bool:
+    async def cancelOrder(self, order: Order) -> Awaitable[bool]:
         # given an aat Order, convert to json and cancel
         jsn = {}
 

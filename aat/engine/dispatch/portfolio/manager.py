@@ -46,17 +46,17 @@ class PortfolioManager(ManagerBase):
     # *********************
     # Risk Methods        *
     # *********************
-    def portfolio(self):
+    def portfolio(self) -> Portfolio:
         return self._portfolio
 
     def positions(
         self, strategy, instrument: Instrument = None, exchange: ExchangeType = None
-    ):
+    ) -> List[Position]:
         return self._portfolio.positions(
             strategy=strategy, instrument=instrument, exchange=exchange
         )
 
-    def priceHistory(self, instrument: Instrument = None):
+    def priceHistory(self, instrument: Instrument = None) -> Union[dict, pd.DataFrame]:
         if instrument:
             return pd.DataFrame(
                 self._prices[instrument], columns=[instrument.name, "when"]
@@ -69,47 +69,47 @@ class PortfolioManager(ManagerBase):
     # **********************
     # EventHandler methods *
     # **********************
-    async def onTrade(self, event: Event):
+    async def onTrade(self, event: Event) -> None:
         trade: Trade = event.target  # type: ignore
         self._portfolio.onTrade(trade)
 
-    async def onCancel(self, event):
+    async def onCancel(self, event: Event) -> None:
         # TODO
         pass
 
-    async def onOpen(self, event: Event):
+    async def onOpen(self, event: Event) -> None:
         # TODO
         pass
 
-    async def onFill(self, event: Event):
+    async def onFill(self, event: Event) -> None:
         # TODO
         pass
 
-    async def onChange(self, event: Event):
+    async def onChange(self, event: Event) -> None:
         # TODO
         pass
 
-    async def onData(self, event: Event):
+    async def onData(self, event: Event) -> None:
         # TODO
         pass
 
-    async def onHalt(self, event: Event):
+    async def onHalt(self, event: Event) -> None:
         # TODO
         pass
 
-    async def onContinue(self, event: Event):
+    async def onContinue(self, event: Event) -> None:
         # TODO
         pass
 
-    async def onError(self, event: Event):
+    async def onError(self, event: Event) -> None:
         # TODO
         pass
 
-    async def onStart(self, event: Event):
+    async def onStart(self, event: Event) -> None:
         # TODO
         pass
 
-    async def onExit(self, event: Event):
+    async def onExit(self, event: Event) -> None:
         # TODO
         pass
 
@@ -118,6 +118,6 @@ class PortfolioManager(ManagerBase):
     #########################
     async def onTraded(  # type: ignore[override]
         self, event: Event, strategy: Optional[EventHandler]
-    ):
+    ) -> None:
         trade: Trade = event.target  # type: ignore
         self._portfolio.onTraded(trade, strategy)
