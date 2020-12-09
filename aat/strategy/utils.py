@@ -100,9 +100,9 @@ class StrategyUtilsMixin(object):
         """Return list of all accounts"""
         raise NotImplementedError()
 
-    def subscribe(self, instrument=None):
+    async def subscribe(self, instrument: Instrument) -> None:
         """Subscribe to market data for the given instrument"""
-        return self._manager.subscribe(instrument=instrument, strategy=self)
+        return await self._manager.subscribe(instrument=instrument, strategy=self)
 
     async def lookup(self, instrument: Optional[Instrument], exchange=None):
         """Return list of all available instruments that match the instrument given"""

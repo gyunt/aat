@@ -21,14 +21,14 @@ class OrderManager(ManagerBase):
         """add an exchange"""
         self._exchanges[exchange.exchange()] = exchange
 
-    def _setManager(self, manager):
+    def _setManager(self, manager):  # type: ignore
         """install manager"""
         self._manager = manager
 
     # *********************
     # Order Entry Methods *
     # *********************
-    async def newOrder(self, strategy, order: Order) -> bool:
+    async def newOrder(self, strategy: Optional[EventHandler], order: Order) -> bool:
         exchange = self._exchanges.get(order.exchange)
         if not exchange:
             raise Exception("Exchange not installed: {}".format(order.exchange))
@@ -37,7 +37,7 @@ class OrderManager(ManagerBase):
         self._pending_orders[order.id] = (order, strategy)
         return ret
 
-    async def cancelOrder(self, strategy, order: Order) -> bool:
+    async def cancelOrder(self, strategy: Optional[EventHandler], order: Order) -> bool:
         exchange = self._exchanges.get(order.exchange)
         if not exchange:
             raise Exception("Exchange not installed: {}".format(order.exchange))

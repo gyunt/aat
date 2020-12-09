@@ -8,7 +8,7 @@ import time
 from datetime import datetime
 from functools import lru_cache
 from requests.auth import AuthBase
-from typing import Dict, List, Union, Awaitable
+from typing import Dict, List, Union, Awaitable, Any, AsyncGenerator
 
 # from aat import Instrument, InstrumentType, Account, Position
 from aat import (
@@ -71,7 +71,7 @@ class CoinbaseExchangeClient(AuthBase):
         self.passphrase = passphrase
 
         # order_map
-        self._order_map: Dict[int, Order] = {}
+        self._order_map: Dict[str, Order] = {}
 
         # sequence number for order book
         self.seqnum: Dict[Instrument, int] = {}
@@ -189,7 +189,7 @@ class CoinbaseExchangeClient(AuthBase):
         return Instrument(name=symbol, type=InstrumentType.CURRENCY)
 
     @lru_cache(None)
-    def accounts(self) -> List[Account]:
+    async def accounts(self) -> List[Account]:
         """fetch a list of coinbase accounts. These store quantities of InstrumentType.CURRENCY"""
         ret = []
 
@@ -283,14 +283,14 @@ class CoinbaseExchangeClient(AuthBase):
         id = self._newOrder(jsn)
         if id != "":
             # successful, set id on the order and return true
-            order.id = id
-            self._order_map[id] = order
+            order.id = str(id)
+            self._order_map[order.id] = order
             return True
 
         # otherwise return false indicating rejected
         return False
 
-    async def cancelOrder(self, order: Order) -> Awaitable[bool]:
+    async def cancelOrder(self, order: Order) -> bool:
         # given an aat Order, convert to json and cancel
         jsn = {}
 
@@ -300,7 +300,9 @@ class CoinbaseExchangeClient(AuthBase):
         jsn["product_id"] = order.instrument.brokerId
         return self._cancelOrder(jsn)
 
-    def orderBook(self, subscriptions: List[Instrument]):
+    async def orderBook(
+        self, subscriptions: List[Instrument]
+    ) -> AsyncGenerator[Any, Event]:
         """fetch level 3 order book for each Instrument in our subscriptions"""
         for sub in subscriptions:
             # fetch the order book
@@ -338,7 +340,7 @@ class CoinbaseExchangeClient(AuthBase):
                 )
                 yield Event(type=EventType.OPEN, target=o)
 
-    async def websocket(self, subscriptions: List[Instrument]):
+    async def websocket(self, subscriptions: List[Instrument]):  # type: ignore
         # copy the base subscription template
         subscription = _SUBSCRIPTION.copy()
 
@@ -584,16 +586,16 @@ class CoinbaseExchangeClient(AuthBase):
 
                         # Generate a trade event
                         # First, create an order from the event
-                        if x.get("taker_order_id", "") in self._order_map:
-                            o = self._order_map[x.get("taker_order_id")]
+                        if str(x.get("taker_order_id", "")) in self._order_map:
+                            o = self._order_map[str(x.get("taker_order_id"))]
 
                             o.filled = float(x["size"])
 
                             # my order
                             mine = True
 
-                        elif x.get("maker_order_id", "") in self._order_map:
-                            o = self._order_map[x.get("maker_order_id")]
+                        elif str(x.get("maker_order_id", "")) in self._order_map:
+                            o = self._order_map[str(x.get("maker_order_id"))]
                             # TODO filled?
 
                             # my order
@@ -619,7 +621,12 @@ class CoinbaseExchangeClient(AuthBase):
                         # create a trader with this order as the taker
                         # makers would be accumulated via the
                         # `elif x['reason'] == 'filled'` block above
-                        t = Trade(float(x["size"]), float(x["price"]), [], o)
+                        t = Trade(
+                            float(x["size"]),
+                            float(x["price"]),
+                            taker_order=o,
+                            maker_orders=[],
+                        )
 
                         if mine:
                             t.my_order = o

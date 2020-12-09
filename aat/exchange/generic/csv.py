@@ -2,7 +2,7 @@ import asyncio
 import csv
 from collections import deque
 from datetime import datetime
-from typing import List, Deque
+from typing import List, Deque, AsyncGenerator, Any
 from aat.config import EventType, InstrumentType, Side, TradingType
 from aat.core import ExchangeType, Event, Instrument, Trade, Order
 from aat.exchange import Exchange
@@ -58,7 +58,7 @@ class CSV(Exchange):
                     )
                 )
 
-    async def tick(self):
+    async def tick(self) -> AsyncGenerator[Any, Event]:  # type: ignore[override]
         for item in self._data:
             yield Event(EventType.TRADE, item)
             await asyncio.sleep(0)

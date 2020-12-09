@@ -45,7 +45,7 @@ class Exchange(_MarketData, _OrderEntry):
         For OrderEntry-only, can just return None
         """
 
-    async def lookup(self, instrument: Optional[Instrument]) -> List[Instrument]:
+    async def lookup(self, instrument: Instrument) -> List[Instrument]:
         """lookup an instrument on the exchange"""
         return []
 

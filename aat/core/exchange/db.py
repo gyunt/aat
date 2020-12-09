@@ -1,4 +1,4 @@
-from typing import Mapping, TYPE_CHECKING
+from typing import Dict, TYPE_CHECKING
 from ...config import InstrumentType
 
 if TYPE_CHECKING:
@@ -11,8 +11,8 @@ class ExchangeDB(object):
     """exchange registration"""
 
     def __init__(self) -> None:
-        self._name_map: Mapping[str, "ExchangeType"] = {}
-        self._map: Mapping["Instrument", "ExchangeType"] = {}
+        self._name_map: Dict[str, "ExchangeType"] = {}
+        self._map: Dict["Instrument", "ExchangeType"] = {}
 
     def add(self, exchange: "ExchangeType") -> None:
         if exchange.name in self._name_map:

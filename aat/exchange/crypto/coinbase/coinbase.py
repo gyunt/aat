@@ -1,7 +1,7 @@
 import os
-from typing import List, AsyncGenerator
+from typing import List, AsyncGenerator, Any
 
-from aat.core import ExchangeType, Order, Instrument, Account
+from aat.core import ExchangeType, Order, Instrument, Account, Event
 from aat.config import TradingType, InstrumentType
 from aat.exchange import Exchange
 
@@ -73,7 +73,7 @@ class CoinbaseProExchange(Exchange):
         # instantiate instruments
         self._client.instruments()
 
-    async def lookup(self, instrument: Instrument) -> Instrument:
+    async def lookup(self, instrument: Instrument) -> List[Instrument]:
         """lookup an instrument on the exchange"""
         # TODO
         raise NotImplementedError()
@@ -81,11 +81,11 @@ class CoinbaseProExchange(Exchange):
     # ******************* #
     # Market Data Methods #
     # ******************* #
-    async def tick(self) -> AsyncGenerator:
+    async def tick(self) -> AsyncGenerator[Any, Event]:  # type: ignore[override]
         """return data from exchange"""
 
         # First, roll through order book snapshot
-        for item in self._client.orderBook(self._subscriptions):
+        async for item in self._client.orderBook(self._subscriptions):
             yield item
 
         # then stream in live updates

@@ -104,6 +104,12 @@ fixjs:  ## run clang-format
 annotate: ## MyPy type annotation check
 	$(PYTHON) -m mypy --disallow-untyped-calls --disallow-untyped-defs aat
 
+type_ignore:  ## Count type ignores
+    grep -rin "type: ignore" ./aat | wc -l
+
+type_ignore_list:  ## List all type ignores
+    grep -rin "type: ignore" ./aat
+
 docs:  ## Build the sphinx docs
 	make -C docs html
 	open ./docs/_build/html/index.html

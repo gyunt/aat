@@ -1,6 +1,6 @@
 from abc import ABCMeta
 from typing import List
-from aat.core import Order, Position
+from aat.core import Order, Position, Account
 
 # from abc import ABCMeta, abstractmethod
 
@@ -9,7 +9,7 @@ class _OrderEntry(metaclass=ABCMeta):
     """internal only class to represent the rest-sink
     side of a data source"""
 
-    async def accounts(self) -> List[Position]:
+    async def accounts(self) -> List[Account]:
         """get accounts from source"""
         return []
 

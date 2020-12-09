@@ -1,21 +1,22 @@
-from typing import Optional
+from datetime import datetime
+from typing import Optional, Any
 from aat import Strategy, Event, Order, Trade, Side, Instrument, InstrumentType
 
 
 class MomentumStrategy(Strategy):
     def __init__(
         self,
-        instrument,
-        trigger,
-        profit,
-        stop,
-        notional=None,
-        enter_hour=10,
-        enter_minute=0,
-        exit_hour=15,
-        exit_minute=30,
-        *args,
-        **kwargs
+        instrument: str,
+        trigger: str,
+        profit: str,
+        stop: str,
+        notional: str = "",
+        enter_hour: int = 10,
+        enter_minute: int = 0,
+        exit_hour: int = 15,
+        exit_minute: int = 30,
+        *args: Any,
+        **kwargs: Any
     ) -> None:
         super(MomentumStrategy, self).__init__(*args, **kwargs)
 
@@ -33,7 +34,7 @@ class MomentumStrategy(Strategy):
 
         # how much to trade
         self._notional = float(notional) if notional else None
-        self._quantity = None
+        self._quantity: Optional[float] = None
 
         # only enter after this time
         self._enter_hour = enter_hour
@@ -44,9 +45,9 @@ class MomentumStrategy(Strategy):
         self._exit_minute = exit_minute
 
         # trackers
-        self._initial_price = None
-        self._initial_price_day = None
-        self._last_price = None
+        self._initial_price: Optional[float] = None
+        self._initial_price_day: Optional[datetime] = None
+        self._last_price: Optional[float] = None
 
         # orders
         self._enter_order: Optional[Order] = None

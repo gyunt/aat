@@ -218,7 +218,7 @@ class InteractiveBrokersExchange(Exchange):
             super().__init__(ExchangeType("interactivebrokerspaper"))
 
         # map order.id to order
-        self._orders: Dict[int, Order] = {}
+        self._orders: Dict[str, Order] = {}
 
         # map order id to received event
         self._order_received_map: Dict[str, asyncio.Event] = {}
@@ -230,9 +230,11 @@ class InteractiveBrokersExchange(Exchange):
 
         # IB TWS gateway
         self._order_event_queue: Queue[Dict[str, Union[str, int, float]]] = Queue()
-        self._market_data_queue: Queue[Dict[str, Union[str, int, float]]] = Queue()
+        self._market_data_queue: Queue[
+            Dict[str, Union[str, int, float, Instrument]]
+        ] = Queue()
         self._contract_lookup_queue: Queue[Contract] = Queue()
-        self._account_position_queue: Queue[Dict[str, Union[str, int, float]]] = Queue()
+        self._account_position_queue: Queue[Position] = Queue()
         self._api = _API(
             account,
             self.exchange(),
@@ -297,14 +299,14 @@ class InteractiveBrokersExchange(Exchange):
     async def subscribe(self, instrument: Instrument) -> None:
         self._api.subscribeMarketData(instrument)
 
-    async def tick(self) -> AsyncGenerator[Any, Event]:
+    async def tick(self) -> AsyncGenerator[Any, Event]:  # type: ignore[override]
         """return data from exchange"""
         while True:
             # clear order events
             while self._order_event_queue.qsize() > 0:
                 order_data = self._order_event_queue.get()
                 status = order_data["status"]
-                order = self._orders[order_data["orderId"]]
+                order = self._orders[str(order_data["orderId"])]
 
                 if status in (
                     "ApiPending",
@@ -345,8 +347,8 @@ class InteractiveBrokersExchange(Exchange):
 
                     # create trade object
                     t = Trade(
-                        volume=order_data["filled"],
-                        price=order_data["avgFillPrice"],
+                        volume=order_data["filled"],  # type: ignore
+                        price=order_data["avgFillPrice"],  # type: ignore
                         maker_orders=[],
                         taker_order=order,
                     )
@@ -360,8 +362,8 @@ class InteractiveBrokersExchange(Exchange):
             # clear market data events
             while self._market_data_queue.qsize() > 0:
                 market_data = self._market_data_queue.get()
-                instrument = market_data["instrument"]
-                price = market_data["price"]
+                instrument: Instrument = market_data["instrument"]  # type: ignore
+                price: float = market_data["price"]  # type: ignore
                 o = AATOrder(
                     volume=1,
                     price=price,
@@ -369,7 +371,7 @@ class InteractiveBrokersExchange(Exchange):
                     instrument=instrument,
                     exchange=self.exchange(),
                 )
-                t = Trade(volume=1, price=price, taker_order=o, maker_orders=[])
+                t = Trade(volume=1, price=float(price), taker_order=o, maker_orders=[])
                 yield Event(type=EventType.TRADE, target=t)
 
             await asyncio.sleep(0)
@@ -390,6 +392,7 @@ class InteractiveBrokersExchange(Exchange):
             else:
                 await asyncio.sleep(1)
                 i += 1
+        return []
 
     async def newOrder(self, order: AATOrder) -> bool:
         """submit a new order to the exchange. should set the given order's `id` field to exchange-assigned id
@@ -408,8 +411,8 @@ class InteractiveBrokersExchange(Exchange):
         self._orders[order.id] = order
 
         # set event for later trigerring
-        self._order_received_map[id] = Event()
-        await self._order_received_map[id]
+        self._order_received_map[id] = asyncio.Event()
+        await self._order_received_map[id]  # type: ignore
 
         res = self._order_received_res[id]
         del self._order_received_map[id]
@@ -421,7 +424,7 @@ class InteractiveBrokersExchange(Exchange):
 
         For MarketData-only, can just return None
         """
-        self._api.cancelOrder(order.id)
+        self._api.cancelOrder(order)
         res = self._order_cancelled_res[order.id]
 
         del self._order_cancelled_map[order.id]

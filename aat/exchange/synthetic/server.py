@@ -7,7 +7,7 @@ from aat.exchange.synthetic import SyntheticExchange
 from aat.core import Order
 
 
-def _main(port=5000) -> websockets.ServerApplication:
+def _main(port: int = 5000):  # type: ignore
     async def handle(websocket, *args, **kwargs):  # type: ignore
         exchange = SyntheticExchange()
         await exchange.connect()

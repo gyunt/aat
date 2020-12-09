@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Optional, Tuple, Dict, Type
+from typing import List, Optional, Tuple, Dict, Type, Union
 
 from .cpp import _CPP, _make_cpp_instrument
 from .db import InstrumentDB
@@ -64,7 +64,7 @@ class Instrument(object):
         name: str,
         type: InstrumentType = InstrumentType.EQUITY,
         exchange: ExchangeType = ExchangeType(""),
-        **kwargs: Dict,
+        **kwargs: Union[str, "Instrument", Side],
     ) -> None:
         """construct a new instrument instance
 
